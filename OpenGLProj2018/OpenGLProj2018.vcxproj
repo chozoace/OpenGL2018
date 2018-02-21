@@ -116,7 +116,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\thirdPartyLibs\glad\src\glad.c" />
+    <ClCompile Include="..\..\..\..\..\..\..\..\OpenGLDevLibs\thirdPartyLibs\glad\src\glad.c" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
