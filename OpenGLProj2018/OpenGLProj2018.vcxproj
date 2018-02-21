@@ -69,8 +69,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\ChozoAce\Documents\GameDev\OpenGL2018\thirdPartyLibs\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\ChozoAce\Documents\GameDev\OpenGL2018\thirdPartyLibs\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\OpenGLDevLibs\thirdPartyLibs\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\OpenGLDevLibs\thirdPartyLibs\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
