@@ -45,3 +45,8 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+
+/Debug
+/OpenGlProj2018/Debug
+OpenGLProj2018.sln
+OpenGLProj2018.VC.db
