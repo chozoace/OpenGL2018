@@ -21,7 +21,7 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\..\..\..\OpenGLDevLibs\thirdPartyLibs\glad\src\glad.c">
+    <ClCompile Include="C:\OpenGLDevLibs\thirdPartyLibs\glad\src\glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
