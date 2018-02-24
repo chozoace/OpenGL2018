@@ -26,7 +26,15 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="VertexShader.vsr">
+    <ClInclude Include="Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shader.frs">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shader.vxs">
       <Filter>shaders</Filter>
     </None>
   </ItemGroup>
