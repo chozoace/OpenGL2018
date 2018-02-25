@@ -194,6 +194,12 @@ int main()
 	myShader.setInt("texture1", 0); // or with shader class
 	myShader.setInt("texture2", 1); // or with shader class
 
+	glm::mat4 models[10];
+
+	for (unsigned int i = 0; i < 10; i++)
+	{
+		models[i] = glm::translate(models[i], cubePositions[i]);
+	}
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -220,12 +226,11 @@ int main()
 		glBindVertexArray(VAO[0]);
 		for (unsigned int i = 0; i < 10; i++)
 		{
-			glm::mat4 model;
-			model = glm::translate(model, cubePositions[i]);
-			float angle = 20.0f * i;
-			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+			//model = glm::translate(model, cubePositions[i]);
+			float angle = 20.0f * i + 10;
+			models[i] = glm::rotate(models[i], .002f * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 			int modelLoc = glGetUniformLocation(myShader.ID, "model");
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(models[i]));
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
