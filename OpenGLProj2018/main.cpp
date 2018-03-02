@@ -175,7 +175,7 @@ int main()
 	glm::mat4 view;
 	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 	glm::mat4 projection;
-	projection = glm::perspective(glm::radians(45.0f), screenWidth / screenHeight, 0.1f, 100.0f);
+	projection = glm::perspective(glm::radians(fov), screenWidth / screenHeight, 0.1f, 100.0f);
 
 	stbi_set_flip_vertically_on_load(true);
 	int width, height, nrChannels;
@@ -276,7 +276,6 @@ int main()
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		//model = glm::rotate(model, .002f * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
@@ -286,6 +285,7 @@ int main()
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texture2);
 
+		projection = glm::perspective(glm::radians(fov), screenWidth / screenHeight, 0.1f, 100.0f);
 		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 		int viewLoc = glGetUniformLocation(myShader.ID, "view");
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
@@ -298,7 +298,7 @@ int main()
 		{
 			//model = glm::translate(model, cubePositions[i]);
 			float angle = 20.0f * i + 10;
-			models[i] = glm::rotate(models[i], .002f * glm::radians(45.0f), glm::vec3(1.0f, 0.3f, 0.5f));
+			models[i] = glm::rotate(models[i], .002f * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 			int modelLoc = glGetUniformLocation(myShader.ID, "model");
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(models[i]));
 			glDrawArrays(GL_TRIANGLES, 0, 36);
