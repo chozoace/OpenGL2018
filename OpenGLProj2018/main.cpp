@@ -133,13 +133,20 @@ int main()
 	myShader.use();
 	myShader.setVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
 	myShader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+	myShader.setVec3("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
+	myShader.setVec3("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
+	myShader.setVec3("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+	myShader.setFloat("material.shininess", 32.0f);
+	myShader.setVec3("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+	myShader.setVec3("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f)); // darken the light a bit to fit the scene
+	myShader.setVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 
 	glm::mat4 lightModel = glm::mat4();
 	glm::mat4 cubeModel = glm::mat4();
 	view = glm::mat4();
 	projection = glm::mat4();
 
-	glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+	glm::vec3 lightPos(0.0f, 0.5f, 3.0f);
 	lightModel = glm::translate(lightModel, lightPos);
 	lightModel = glm::scale(lightModel, glm::vec3(.3f));
 
@@ -155,12 +162,14 @@ int main()
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
+
+		
 		lightModel = glm::mat4();
 		lightPos.z = cos(glfwGetTime()) * radius;
 		lightPos.x = sin(glfwGetTime()) * radius;
 		lightModel = glm::translate(lightModel, lightPos);
 		lightModel = glm::scale(lightModel, glm::vec3(.3f));
-		cout << lightPos.x << " " << lightPos.y << endl;
+		
 
 		lampShader.use();
 		glBindVertexArray(VAO[0]);
@@ -175,8 +184,20 @@ int main()
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		myShader.use();
+		glm::vec3 lightColor;
+		lightColor.x = sin(glfwGetTime() * 2.0f);
+		lightColor.y = sin(glfwGetTime() * 0.7f);
+		lightColor.z = sin(glfwGetTime() * 1.3f);
+
+		glm::vec3 diffuseColor = lightColor   * glm::vec3(0.5f); // decrease the influence
+		glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f); // low influence
+
+		myShader.setVec3("light.ambient", ambientColor);
+		myShader.setVec3("light.diffuse", diffuseColor);
+
 		//update light pos
 		myShader.setVec3("lightPos", lightPos);
+		myShader.setVec3("light.position", lightPos);
 		myShader.setVec3("viewPos", cameraPos);
 		glBindVertexArray(lightVAO);
 		projection = glm::perspective(glm::radians(fov), screenWidth / screenHeight, 0.1f, 100.0f);
