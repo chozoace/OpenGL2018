@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "Shader.h"
+#include "Model.h"
 #include <iostream>
 #include <string>
 #include <glm/glm.hpp>
@@ -98,67 +99,6 @@ int main()
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return -1;
 	}
-	//stbi_set_flip_vertically_on_load(true);
-	int width, height, nrChannels;
-	unsigned char *data = stbi_load("container2.png", &width, &height, &nrChannels, 0);
-
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	if (data)
-	{
-		GLenum format;
-		if (nrChannels == 1)
-			format = GL_RED;
-		else if (nrChannels == 3)
-			format = GL_RGB;
-		else if (nrChannels == 4)
-			format = GL_RGBA;
-
-		glBindTexture(GL_TEXTURE_2D, texture);
-		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		stbi_image_free(data);
-	}
-	else
-	{
-		std::cout << "Failed to load texture" << std::endl;
-		stbi_image_free(data);
-	}
-
-	int width2, height2, nrChannels2;
-	unsigned char *data2 = stbi_load("container2_specular.png", &width2, &height2, &nrChannels2, 0);
-	unsigned int specularTexture;
-	glGenTextures(1, &specularTexture);
-	if (data2)
-	{
-		GLenum format;
-		if (nrChannels2 == 1)
-			format = GL_RED;
-		else if (nrChannels2 == 3)
-			format = GL_RGB;
-		else if (nrChannels2 == 4)
-			format = GL_RGBA;
-
-		glBindTexture(GL_TEXTURE_2D, specularTexture);
-		glTexImage2D(GL_TEXTURE_2D, 0, format, width2, height2, 0, format, GL_UNSIGNED_BYTE, data2);
-		glGenerateMipmap(GL_TEXTURE_2D);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		stbi_image_free(data2);
-	}
-	else
-	{
-		std::cout << "Failed to load texture" << std::endl;
-		stbi_image_free(data2);
-	}
 
 	glViewport(0, 0, screenWidth, screenHeight);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
@@ -166,6 +106,41 @@ int main()
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glEnable(GL_DEPTH_TEST);
 
+	Shader ourShader("modelShader.vxs", "modelShader.frs");
+	Model obj("nanosuit/nanosuit.obj");
+
+	//put while draw loop
+	while (!glfwWindowShouldClose(window))
+	{
+		float currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+		processInput(window);
+
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		ourShader.use();
+		projection = glm::perspective(glm::radians(fov), screenWidth / screenHeight, 0.1f, 100.0f);
+		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+		int viewLoc = glGetUniformLocation(ourShader.ID, "view");
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+		int projectionLoc = glGetUniformLocation(ourShader.ID, "projection");
+		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+		glm::mat4 model;
+		model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f)); // translate it down so it's at the center of the scene
+		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
+		int modelLoc = glGetUniformLocation(ourShader.ID, "model");
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		obj.draw(ourShader);
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+	
+
+	/*
 	unsigned int VBO[1];
 	glGenBuffers(1, VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
@@ -291,6 +266,7 @@ int main()
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
+	*/
 
 	glfwTerminate();
 	return 0;

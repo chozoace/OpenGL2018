@@ -49,5 +49,11 @@
     <None Include="lampShader.frs">
       <Filter>shaders</Filter>
     </None>
+    <None Include="modelShader.frs">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="modelShader.vxs">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

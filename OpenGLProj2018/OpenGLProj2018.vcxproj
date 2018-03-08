@@ -127,6 +127,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="lampShader.frs" />
+    <None Include="modelShader.frs" />
+    <None Include="modelShader.vxs" />
     <None Include="shader.frs" />
     <None Include="shader.vxs" />
   </ItemGroup>
