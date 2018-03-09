@@ -77,6 +77,19 @@ float vertices[] = {
 	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
 };
 
+glm::vec3 cubePositions[] = {
+	glm::vec3(0.0f,  0.0f,  0.0f),
+	glm::vec3(2.0f,  5.0f, -15.0f),
+	glm::vec3(-1.5f, -2.2f, -2.5f),
+	glm::vec3(-3.8f, -2.0f, -12.3f),
+	glm::vec3(2.4f, -0.4f, -3.5f),
+	glm::vec3(-1.7f,  3.0f, -7.5f),
+	glm::vec3(1.3f, -2.0f, -2.5f),
+	glm::vec3(1.5f,  2.0f, -2.5f),
+	glm::vec3(1.5f,  0.2f, -1.5f),
+	glm::vec3(-1.3f,  1.0f, -1.5f)
+};
+
 int main()
 {
 	glfwInit();
@@ -215,6 +228,14 @@ int main()
 
 	glm::mat4 lightModel = glm::mat4();
 	glm::mat4 cubeModel = glm::mat4();
+	//cubeModel = glm::rotate(cubeModel, .0007f * glm::radians(20.0f), glm::vec3(1.0f, 0.3f, 0.5f));
+	glm::mat4 models[10];
+
+	for (unsigned int i = 0; i < 10; i++)
+	{
+		models[i] = glm::translate(models[i], cubePositions[i]);
+	}
+
 	view = glm::mat4();
 	projection = glm::mat4();
 
@@ -239,26 +260,6 @@ int main()
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-		
-		
-		lightModel = glm::mat4();
-		lightPos.z = cos(glfwGetTime()) * radius;
-		lightPos.x = sin(glfwGetTime()) * radius;
-		lightModel = glm::translate(lightModel, lightPos);
-		lightModel = glm::scale(lightModel, glm::vec3(.3f));
-		
-
-		lampShader.use();
-		glBindVertexArray(VAO[0]);
-		projection = glm::perspective(glm::radians(fov), screenWidth / screenHeight, 0.1f, 100.0f);
-		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-		int viewLoc = glGetUniformLocation(lampShader.ID, "view");
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-		int projectionLoc = glGetUniformLocation(lampShader.ID, "projection");
-		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
-		int modelLoc = glGetUniformLocation(lampShader.ID, "model");
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(lightModel));
-		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		myShader.use();
 		
@@ -276,14 +277,30 @@ int main()
 		//update light pos
 		myShader.setVec3("lightPos", lightPos);
 		myShader.setVec3("light.position", lightPos);
+		myShader.setVec3("light.direction", glm::vec3( -0.2f, -1.0f, -0.3f));
 		myShader.setVec3("viewPos", cameraPos);
 		glBindVertexArray(lightVAO);
 		projection = glm::perspective(glm::radians(fov), screenWidth / screenHeight, 0.1f, 100.0f);
 		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-		viewLoc = glGetUniformLocation(myShader.ID, "view");
+		int viewLoc = glGetUniformLocation(myShader.ID, "view");
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-		projectionLoc = glGetUniformLocation(myShader.ID, "projection");
+		int projectionLoc = glGetUniformLocation(myShader.ID, "projection");
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+		glm::mat4 model;
+		int modelLoc = glGetUniformLocation(myShader.ID, "model");
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+		/*for (unsigned int i = 0; i < 10; i++)
+		{
+			//model = glm::translate(model, cubePositions[i]);
+			float angle = 20.0f * i + 10;
+			models[i] = glm::rotate(models[i], .0007f * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+			int modelLoc = glGetUniformLocation(myShader.ID, "model");
+			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(models[i]));
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}	*/	
+
+		cubeModel = glm::rotate(cubeModel, .0007f * glm::radians(20.0f), glm::vec3(1.0f, 0.3f, 0.5f));
 		modelLoc = glGetUniformLocation(myShader.ID, "model");
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(cubeModel));
 		glDrawArrays(GL_TRIANGLES, 0, 36);
